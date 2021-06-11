@@ -1,25 +1,40 @@
 {:builds
- {:app {:asset-path "/js"
-        :modules {:main {:init-fn app.core/main}}
-        :output-dir "public/js"
-        :target :browser}
-  :cards {:asset-path "/js"
-          :modules {:main {:init-fn app.cards/main}}
-          :compiler-options {:devcards true}
-          :output-dir "public/js"
-          :target :browser}
-  :test {:ns-regexp "app.cards"
-         :output-to "out/test.js"
-         :target :node-test}
-  :e2e {:ns-regexp "e2e.*"
-        :output-to "out/e2e.js"
-        :target :node-test}}
+ {:app
+  {:asset-path "/js"
+   :modules {:main {:init-fn app.core/main}}
+   :output-dir "public/js"
+   :target :browser
+
+   :dev
+   {:compiler-options
+    {:output-feature-set :es6}
+
+    :build-hooks
+    [(teknql.tailwind/start-watch!)]}
+
+   :devtools
+   {:http-root   "public/"
+    :http-port   3000}
+
+   :tailwind/output "public/css/style.css"}}
+
+ :cards {:asset-path "/js"
+         :modules {:main {:init-fn app.cards/main}}
+         :compiler-options {:devcards true}
+         :output-dir "public/js"
+         :target :browser}
+ :test {:ns-regexp "app.cards"
+        :output-to "out/test.js"
+        :target :node-test}
+ :e2e {:ns-regexp "e2e.*"
+       :output-to "out/e2e.js"
+       :target :node-test}
 
  :dependencies [[lilactown/helix "0.1.1"]
+                [com.teknql/shadow-cljs-tailwind-jit "0.2.1"]
                 [devcards "0.2.6"]]
 
  :dev-http {3000 "public"}
  :nrepl {:port 3333}
- :source-paths ["src"]
- :dev {:compiler-options {:output-feature-set :es6}}}
+ :source-paths ["src"]}
 
