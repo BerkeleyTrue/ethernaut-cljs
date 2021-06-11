@@ -1,14 +1,9 @@
 (ns app.core
-  "This namespace contains your application and is the entrypoint for 'yarn start'."
-  (:require [reagent.core :as r]
-            [app.hello :refer [hello]]))
+  (:require
+    [helix.core :refer [$]]
+    ["react-dom" :refer [render]]
+    [app.layout :as layout]))
 
-(defn ^:dev/after-load render
-  "Render the toplevel component for this app."
-  []
-  (r/render [hello] (.getElementById js/document "app")))
 
-(defn ^:export main
-  "Run application startup logic."
-  []
-  (render))
+(defn ^:export main []
+  (render ($ layout/main) (js/document.getElementById "app")))

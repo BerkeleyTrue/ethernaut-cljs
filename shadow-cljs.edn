@@ -14,8 +14,12 @@
   :e2e {:ns-regexp "e2e.*"
         :output-to "out/e2e.js"
         :target :node-test}}
- :dependencies [[reagent "0.8.1"]
+
+ :dependencies [[lilactown/helix "0.1.1"]
                 [devcards "0.2.6"]]
+
  :dev-http {3000 "public"}
  :nrepl {:port 3333}
- :source-paths ["src"]}
+ :source-paths ["src"]
+ :dev {:compiler-options {:output-feature-set :es6}}}
+
