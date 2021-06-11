@@ -1,5 +1,5 @@
 (ns app.layout
   (:require [helix.core :refer [defnc]]))
 
-(defnc main []
+(defnc App []
   "Hello World")
