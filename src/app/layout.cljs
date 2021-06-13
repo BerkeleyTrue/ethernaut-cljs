@@ -2,19 +2,8 @@
   (:require [helix.core :refer [defnc $]]
             [helix.dom :as d]
             [app.utils.core :refer [class-names]]
-            [app.side-bar]))
-
-
-(defnc Main []
-  (d/main
-    {:className
-     (class-names
-       :mt-12
-       :text-4xl
-       :flex-grow
-       :px-6)}
-
-    "Ethernauts"))
+            [app.side-bar :refer [SideBar]]
+            [app.main.core :refer [Main]]))
 
 (defnc App []
   (d/div
@@ -29,5 +18,5 @@
        :overflow-hidden
        :relative
        :w-screen)}
-    ($ app.side-bar/SideBar)
+    ($ SideBar)
     ($ Main)))
