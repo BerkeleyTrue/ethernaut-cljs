@@ -1,10 +1,18 @@
 (ns app.core
   (:require
     [helix.core :refer [$]]
-    ["react-dom" :refer [render]]
+    [react-dom :refer [render]]
+    [app.redux.core :refer [react-redux-context create-store]]
     [app.layout :as layout]))
 
-(defn ^:dev/after-load create-app []
-  (render ($ layout/App) (js/document.getElementById "app")))
+(defonce default-state {})
 
-(defn ^:export main [] (create-app))
+(defn ^:dev/after-load create-app [default-state]
+  (let [store (create-store (fn [] {}) default-state)]
+
+    (render ($ (.-Provider react-redux-context)
+               {:value store}
+               ($ layout/App))
+            (js/document.getElementById "app"))))
+
+(defn ^:export main [] (create-app default-state))
