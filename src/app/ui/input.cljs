@@ -18,7 +18,7 @@
                [label
                 model
                 value
-                onChange
+                on-change
                 invalid
                 disabled]}]
 
@@ -26,7 +26,7 @@
   (let [[iv iv-on-change] (use-state value)
         controlled-ref (use-ref (not (nil? value)))
         controlled? controlled-ref.current
-        handle-change (use-change iv-on-change onChange)
+        handle-change (use-change iv-on-change on-change)
         input-classes (class-names
                         :border
                         :rounded
