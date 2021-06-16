@@ -32,8 +32,7 @@
 
 (defn create-store [reducer preloaded-state]
   (let [state (atom preloaded-state)
-        dispatch (fn [action]
-                   (swap! state (reducer @state action)))
+        dispatch (fn [action] (swap! state #(reducer % action)))
 
         get-state (fn [] @state)]
 

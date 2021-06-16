@@ -44,17 +44,24 @@
         action)))))
 
 (defn reduce-reducers [default-state & reducers]
-  (invariant (not (nil? default-state)) (str "reduce-reducers expects an initial state but got " default-state))
+  (invariant
+    (not (nil? default-state))
+    (str "reduce-reducers expects an initial state but got " default-state))
+  (invariant
+    (not (empty? reducers))
+    (str "reducer-reducers expects at least one reducer but found " reducers))
+
   (run!
     #(invariant (fn? %) (str "reduce-reducers expects all reducers to be of type function but found " %))
     reducers)
 
   (fn [state action]
+    (invariant (map? action) "expected action to be a map")
     (reduce
       (fn [new-state reducer]
         (reducer new-state action))
-      reducers
-      state)))
+      state
+      reducers)))
 
 (defn handle-action
   ([type default-state] (handle-action type identity default-state))
@@ -108,5 +115,5 @@
 
           (assoc next-state key next-state-for-key)))
 
-      reducer-map
-      state)))
+      state
+      reducer-map)))
