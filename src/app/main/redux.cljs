@@ -1,7 +1,7 @@
 (ns app.main.redux
   (:require [app.redux.verticals :as verts]))
 
-(def on-address-change (verts/create-action ::on-change))
+(def on-address-change (verts/create-action ::on-address-change))
 
 (defn address-selector [state]
   (::address state))
@@ -13,5 +13,5 @@
 (def reducer-slice
   {(keyword (namespace ::r))
    (verts/handle-actions
-     {::on-change (fn [state {val :payload}] (assoc state :address val))}
+     {::on-address-change (fn [state {val :payload}] (assoc state :address val))}
      default-state)})
