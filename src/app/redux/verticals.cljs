@@ -78,7 +78,9 @@
        (let [state (or state default-state)
              type (:type action)]
          (if
-           (or (not type) (some #(= type %) types)) state
+           (or
+             (not type)
+             (not (some #(= type %) types))) state
            (reducer state action)))))))
 
 (defn handle-actions [handler-map default-state]
