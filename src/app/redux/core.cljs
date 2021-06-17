@@ -33,15 +33,31 @@
 (defn create-store
   ([reducer preloaded-state]
    (let [state (atom preloaded-state)
-         dispatch (fn [action] (swap! state #(reducer % action)))
+         get-state (fn [] @state)
 
-         get-state (fn [] @state)]
+         subscriptions (atom #{})
+         subscribe (fn [subscriber]
+                     (invariant
+                       (fn? subscriber)
+                       (str "subscribe expects subscriber to be a function but found " (or subscriber "nil")))
+                     (swap! subscriptions conj subscriber)
+                     (fn [] (swap! subscriptions disj subscriber)))
+
+         dispatch (fn [action]
+                    (invariant
+                      (and (map? action) (:type action))
+                      (str "dispatch expects all actions to be a map with a type set but found " (or action "nil")))
+
+                    (swap! state #(reducer % action))
+                    (run! #(%) @subscriptions))]
 
      ;; dispatch INIT so that each reducer populates it's own initial state
-     (dispatch (:type ::INIT))
+     (dispatch {:type ::INIT})
 
      {:dispatch dispatch
-      :get-state get-state}))
+      :get-state get-state
+      :subscibe subscribe}))
+
 
   ([reducer preloaded-state enhancer]
    (invariant

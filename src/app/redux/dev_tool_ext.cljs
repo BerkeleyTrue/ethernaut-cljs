@@ -22,5 +22,4 @@
 
             (.init dev-tool (get-js-state))
 
-            {:dispatch dispatch
-             :get-state (:get-state store)}))))))
+            (merge store {:dispatch dispatch})))))))
