@@ -18,7 +18,10 @@
                  (dev-tools-enhancer))]
 
      (render ($ (.-Provider react-redux-context)
-                {:value store}
+                {:value store
+                 ;; key to force re-renders on hot reload
+                 :key (rand)}
+
                 ($ layout/App))
              (js/document.getElementById "app")))))
 

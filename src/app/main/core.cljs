@@ -22,7 +22,7 @@
           {:className
            (class-names
              :text-4xl)}
-          "Ethernauts"))
+          "Ethernaut"))
       (d/section
         (d/div
           {:className "mb-5"}
