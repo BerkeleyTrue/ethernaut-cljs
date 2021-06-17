@@ -4,6 +4,7 @@
     [react-dom :refer [render]]
     [app.redux.core :refer [react-redux-context create-store]]
     [app.redux.verticals :as verts]
+    [app.redux.dev-tool-ext :refer [dev-tools-enhancer]]
     [app.layout :as layout]
     [app.main.redux :as main-redux]))
 
@@ -12,7 +13,8 @@
 (defn ^:dev/after-load create-app [default-state]
   (let [store (create-store
                 (verts/combine-reducers main-redux/reducer-slice)
-                default-state)]
+                default-state
+                (dev-tools-enhancer))]
 
     (render ($ (.-Provider react-redux-context)
                {:value store}

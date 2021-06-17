@@ -56,7 +56,6 @@
     reducers)
 
   (fn [state action]
-    (invariant (map? action) "expected action to be a map")
     (reduce
       (fn [new-state reducer]
         (reducer new-state action))

@@ -30,11 +30,18 @@
   (let [dispatch (use-dispatch)]
     (comp dispatch action-creator)))
 
-(defn create-store [reducer preloaded-state]
-  (let [state (atom preloaded-state)
-        dispatch (fn [action] (swap! state #(reducer % action)))
+(defn create-store
+  ([reducer preloaded-state]
+   (let [state (atom preloaded-state)
+         dispatch (fn [action] (swap! state #(reducer % action)))
 
-        get-state (fn [] @state)]
+         get-state (fn [] @state)]
 
-    {:dispatch dispatch
-     :get-state get-state}))
+     {:dispatch dispatch
+      :get-state get-state}))
+  ([reducer preloaded-state enhancer]
+   (invariant
+     (fn? enhancer)
+     (str "create-store expected enhancer to be a function but found " enhancer))
+
+   ((enhancer create-store) reducer preloaded-state)))
