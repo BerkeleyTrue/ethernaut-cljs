@@ -8,7 +8,7 @@
 
 (defnc Main []
   (let [address (use-selector redux/address-selector)
-        on-address-change (use-action #(->> % (:target) (:value) redux/on-address-change))]
+        on-address-change (use-action #(-> % (.. -target -value) redux/on-address-change))]
 
     (d/main
       {:className
