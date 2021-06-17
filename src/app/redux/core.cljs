@@ -37,8 +37,12 @@
 
          get-state (fn [] @state)]
 
+     ;; dispatch INIT so that each reducer populates it's own initial state
+     (dispatch (:type ::INIT))
+
      {:dispatch dispatch
       :get-state get-state}))
+
   ([reducer preloaded-state enhancer]
    (invariant
      (fn? enhancer)

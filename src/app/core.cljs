@@ -8,17 +8,18 @@
     [app.layout :as layout]
     [app.main.redux :as main-redux]))
 
-(defonce default-state (merge {} main-redux/default-state))
 
-(defn ^:dev/after-load create-app [default-state]
-  (let [store (create-store
-                (verts/combine-reducers main-redux/reducer-slice)
-                default-state
-                (dev-tools-enhancer))]
+(defn ^:dev/after-load create-app
+  ([] (create-app nil))
+  ([default-state]
+   (let [store (create-store
+                 (verts/combine-reducers main-redux/reducer-slice)
+                 default-state
+                 (dev-tools-enhancer))]
 
-    (render ($ (.-Provider react-redux-context)
-               {:value store}
-               ($ layout/App))
-            (js/document.getElementById "app"))))
+     (render ($ (.-Provider react-redux-context)
+                {:value store}
+                ($ layout/App))
+             (js/document.getElementById "app")))))
 
-(defn ^:export main [] (create-app default-state))
+(defn ^:export main [] (create-app))
