@@ -18,7 +18,7 @@
     (into (sorted-map))))
 
 (defn create-action
-  ([type] (create-action type identity identity))
+  ([type] (create-action type identity nil))
   ([type payload-creator] (create-action type payload-creator nil))
   ([type payload-creator meta-creator]
    (invariant
@@ -38,10 +38,10 @@
     (fn [& args]
       (let [action {:type type}
             payload (apply final-payload-creator args)]
-        (when payload (assoc action :payload payload))
-        (when meta? (assoc action :meta (apply meta-creator args)))
+        (cond-> action
+          payload (assoc :payload payload)
+          meta? (assoc :meta (apply meta-creator args))))))))
 
-        action)))))
 
 (defn reduce-reducers [default-state & reducers]
   (invariant
