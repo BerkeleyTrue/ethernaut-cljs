@@ -48,7 +48,7 @@
     (not (nil? default-state))
     (str "reduce-reducers expects an initial state but got " default-state))
   (invariant
-    (not (empty? reducers))
+    (seq reducers)
     (str "reducer-reducers expects at least one reducer but found " reducers))
 
   (run!
