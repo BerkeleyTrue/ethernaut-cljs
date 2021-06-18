@@ -29,7 +29,9 @@
         input-classes (class-names
                         :border
                         :rounded
-                        :border-gray-400
+                        (cond
+                          invalid :border-red-600
+                          :else :border-gray-400)
                         :text-lg
                         :leading-normal
                         :h-11
@@ -43,7 +45,7 @@
                         :left-1
                         :text-xs
                         (cond
-                          invalid :text-red-100
+                          invalid :text-red-600
                           disabled :text-gray-200
                           (not (str/blank? (if @controlled? value iv))) :text-blue-500
                           :else :text-gray-500))]
