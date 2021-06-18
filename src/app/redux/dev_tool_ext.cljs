@@ -30,7 +30,6 @@
 
                 dispatch (fn [action]
                            (let [res ((:dispatch store) action)]
-                             (print "action: " action "x: " (clj->js* action))
                              (.send dev-tool (clj->js* action) (get-js-state))
                              res))]
 

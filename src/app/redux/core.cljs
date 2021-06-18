@@ -33,14 +33,21 @@
                          (reset! state-ref state)
                          (reset! selected-state-ref selected-state)
                          (force-rerender))))
+
         new-state ((:get-state store))
         new-selected-state (selector new-state)
+
         selected-state (if
                          (and
                            ;; if global state or selector fn have changed
-                           (or (= selector @selector-ref) (= new-state @state-ref))
-                           ;; and selected state have changed
-                           (not (= @selected-state-ref new-selected-state)))
+                           (or (not (= selector @selector-ref))
+                               (not (= new-state @state-ref)))
+                           ;; and
+                           (or
+                             ;; prev is nil (initial run)
+                             (not @selected-state-ref)
+                             ;; or selected state has changed
+                             (not (= @selected-state-ref new-selected-state))))
                          ;; update local selected-state
                          new-selected-state
                          ;; else use prev selected state
