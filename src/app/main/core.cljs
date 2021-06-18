@@ -8,6 +8,7 @@
 
 (defnc Main []
   (let [address (use-selector redux/address-selector)
+        valid? (use-selector redux/valid?-selector)
         on-address-change (use-action #(-> % (.. -target -value) redux/on-address-change))]
 
     (d/main
@@ -31,4 +32,5 @@
           {:label "Address"
            :model "address"
            :value address
+           :invalid (not valid?)
            :on-change on-address-change})))))
