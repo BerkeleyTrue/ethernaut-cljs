@@ -1,6 +1,6 @@
 (ns app.redux.core
   (:require [helix.core :refer [create-context]]
-            [helix.hooks :refer [use-context use-debug-value]]
+            [helix.hooks :as h]
             ["invariant" :as invariant]))
 
 (def react-redux-context (create-context))
@@ -8,7 +8,7 @@
 (set! (.-displayName react-redux-context) "react-redux-context")
 
 (defn use-redux-context []
-  (use-context react-redux-context))
+  (h/use-context react-redux-context))
 
 (defn use-store []
   (use-redux-context))
@@ -16,9 +16,53 @@
 (defn use-selector [selector]
   (invariant (fn? selector)
              (str "use-selector expects a function but found " selector))
-  (use-debug-value selector)
-  (let [store (use-store)]
-    (selector ((:get-state store)))))
+  (h/use-debug-value selector)
+
+  (let [[_ force-rerender] (h/use-reducer inc 0)
+        store (use-store)
+
+        state-ref (h/use-ref nil)
+        selector-ref (h/use-ref nil)
+        selected-state-ref (h/use-ref nil)
+
+        subscriber (fn []
+                     (let [state ((:get-state store))
+                           selected-state (@selector-ref state)]
+
+                       (print "state1: " state)
+                       (print "selected1: " selected-state)
+
+                       (when (not (= selected-state @selected-state-ref))
+                         (reset! state-ref state)
+                         (reset! selected-state-ref selected-state)
+                         (force-rerender))))
+        new-state ((:get-state store))
+        new-selected-state (selector new-state)
+        selected-state (if
+                         (and
+                           ;; if global state or selector fn have changed
+                           (or (= selector @selector-ref) (= new-state @state-ref))
+                           ;; and selected state have changed
+                           (not (= @selected-state-ref new-selected-state)))
+                         ;; update local selected-state
+                         new-selected-state
+                         ;; else use prev selected state
+                         @selected-state-ref)]
+
+    (print "selected: " selected-state)
+    (h/use-layout-effect
+      :once
+      (reset! selector-ref selector)
+      (reset! state-ref new-state)
+      (reset! selected-state-ref selected-state))
+
+    ;; updates selector state on store updates
+    ;; triggers comp update using force-rerender
+    (h/use-layout-effect
+      [store]
+      ((:subscribe store) subscriber))
+
+    selected-state))
 
 (defn use-dispatch []
   (:dispatch (use-store)))
@@ -37,6 +81,7 @@
 
          subscriptions (atom #{})
          subscribe (fn [subscriber]
+                     (print "subscription")
                      (invariant
                        (fn? subscriber)
                        (str "subscribe expects subscriber to be a function but found " (or subscriber "nil")))
@@ -49,14 +94,17 @@
                       (str "dispatch expects all actions to be a map with a type set but found " (or action "nil")))
 
                     (swap! state #(reducer % action))
-                    (run! #(%) @subscriptions))]
+                    (run! (fn [sub]
+                            (print "sub: " sub)
+                            (sub))
+                          @subscriptions))]
 
      ;; dispatch INIT so that each reducer populates it's own initial state
      (dispatch {:type ::INIT})
 
      {:dispatch dispatch
       :get-state get-state
-      :subscibe subscribe}))
+      :subscribe subscribe}))
 
 
   ([reducer preloaded-state enhancer]
