@@ -29,9 +29,6 @@
                      (let [state ((:get-state store))
                            selected-state (@selector-ref state)]
 
-                       (print "state1: " state)
-                       (print "selected1: " selected-state)
-
                        (when (not (= selected-state @selected-state-ref))
                          (reset! state-ref state)
                          (reset! selected-state-ref selected-state)
@@ -49,7 +46,6 @@
                          ;; else use prev selected state
                          @selected-state-ref)]
 
-    (print "selected: " selected-state)
     (h/use-layout-effect
       :once
       (reset! selector-ref selector)
@@ -81,7 +77,6 @@
 
          subscriptions (atom #{})
          subscribe (fn [subscriber]
-                     (print "subscription")
                      (invariant
                        (fn? subscriber)
                        (str "subscribe expects subscriber to be a function but found " (or subscriber "nil")))
@@ -94,10 +89,7 @@
                       (str "dispatch expects all actions to be a map with a type set but found " (or action "nil")))
 
                     (swap! state #(reducer % action))
-                    (run! (fn [sub]
-                            (print "sub: " sub)
-                            (sub))
-                          @subscriptions))]
+                    (run! #(%) @subscriptions))]
 
      ;; dispatch INIT so that each reducer populates it's own initial state
      (dispatch {:type ::INIT})

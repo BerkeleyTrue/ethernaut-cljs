@@ -1,14 +1,16 @@
 (ns app.main.redux
   (:require [app.redux.verticals :as verts]))
 
+(def this-ns (keyword (namespace ::r)))
+
 (def on-address-change (verts/create-action ::on-address-change))
 
 (defn address-selector [state]
-  (::address state))
+  (get-in state [this-ns :address]))
 
 (def default-state
-  {::address nil
-   ::address? false})
+  {:address nil
+   :address? false})
 
 (def reducer-slice
   {(keyword (namespace ::r))
