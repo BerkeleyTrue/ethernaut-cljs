@@ -7,7 +7,7 @@
   (get-in state [::state :address]))
 
 (def default-state
-  {:address nil
+  {:address ""
    :address? false})
 
 (def reducer-slice

@@ -24,8 +24,7 @@
 
 
   (let [[iv iv-on-change] (use-state value)
-        controlled-ref (use-ref (not (nil? value)))
-        controlled? controlled-ref.current
+        controlled? (use-ref (string? value))
         handle-change (use-change iv-on-change on-change)
         input-classes (class-names
                         :border
@@ -46,7 +45,7 @@
                         (cond
                           invalid :text-red-100
                           disabled :text-gray-200
-                          (not (str/blank? (if controlled? value iv))) :text-blue-500
+                          (not (str/blank? (if @controlled? value iv))) :text-blue-500
                           :else :text-gray-500))]
 
     (d/div
@@ -62,7 +61,7 @@
         {:htmlFor model}
         (d/input
           {:id model
-           :value (if controlled? value iv)
+           :value (if @controlled? value iv)
            :on-change handle-change
            :className input-classes})
 
