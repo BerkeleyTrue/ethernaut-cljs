@@ -30,7 +30,6 @@
        payload-creator))
 
    (let [meta? (fn? meta-creator)
-         type (str type)
          final-payload-creator (if
                                  (= identity payload-creator) identity
                                  (wrap-payload-creator payload-creator))]
@@ -76,7 +75,8 @@
 
      (fn [state action]
        (let [state (or state default-state)
-             type (:type action)]
+             ; convert type to string to match types array above
+             type (str (:type action))]
          (if
            (or
              (not type)
