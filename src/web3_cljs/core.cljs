@@ -1,4 +1,4 @@
-(ns app.web3
+(ns web3-cljs.core
   (:require ["web3-utils" :as utils]))
 
 (defn address? [address]
