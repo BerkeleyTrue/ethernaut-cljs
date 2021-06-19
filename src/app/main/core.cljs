@@ -1,13 +1,28 @@
 (ns app.main.core
   (:require [helix.core :refer [defnc $]]
             [helix.dom :as d]
+            [helix.hooks :as h]
             [redux.core :refer [use-selector use-action]]
+            ["@metamask/detect-provider" :as detect-provider]
             [app.utils.core :refer [class-names]]
             [app.ui.input :refer [Input]]
             [app.main.redux :as redux]))
 
+(defn use-provider []
+  (let [[provider set-provider] (h/use-state nil)]
+    (h/use-effect
+      []
+      (let [pprovider (detect-provider)]
+        (->
+          pprovider
+          (.then set-provider)
+          (.catch #(print "Error couldn't find provider: " %)))))
+
+    provider))
+
 (defnc Main []
-  (let [address (use-selector redux/address-selector)
+  (let [provider (use-provider)
+        address (use-selector redux/address-selector)
         valid? (use-selector redux/valid?-selector)
         on-address-change (use-action #(-> % (.. -target -value) redux/on-address-change))]
 
