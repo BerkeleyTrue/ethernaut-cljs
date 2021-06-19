@@ -1,6 +1,6 @@
 (ns app.main.redux
   (:require [app.web3 :as web3]
-            [app.redux.verticals :as verts]))
+            [redux.verticals :as verts]))
 
 (def on-address-change (verts/create-action ::on-address-change))
 

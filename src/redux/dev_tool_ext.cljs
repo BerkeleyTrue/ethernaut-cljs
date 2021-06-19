@@ -1,4 +1,4 @@
-(ns app.redux.dev-tool-ext
+(ns redux.dev-tool-ext
   (:require [clojure.string :as strings]))
 
 

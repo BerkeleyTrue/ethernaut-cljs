@@ -1,4 +1,4 @@
-(ns app.redux.core
+(ns redux.core
   (:require [helix.core :refer [create-context]]
             [helix.hooks :as h]
             ["invariant" :as invariant]))

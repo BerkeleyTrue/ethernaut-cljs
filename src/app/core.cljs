@@ -2,9 +2,9 @@
   (:require
     [helix.core :refer [$]]
     [react-dom :refer [render]]
-    [app.redux.core :refer [react-redux-context create-store]]
-    [app.redux.verticals :as verts]
-    [app.redux.dev-tool-ext :refer [dev-tools-enhancer]]
+    [redux.core :refer [react-redux-context create-store]]
+    [redux.verticals :as verts]
+    [redux.dev-tool-ext :refer [dev-tools-enhancer]]
     [app.layout :as layout]
     [app.main.redux :as main-redux]))
 

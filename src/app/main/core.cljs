@@ -1,7 +1,7 @@
 (ns app.main.core
   (:require [helix.core :refer [defnc $]]
             [helix.dom :as d]
-            [app.redux.core :refer [use-selector use-action]]
+            [redux.core :refer [use-selector use-action]]
             [app.utils.core :refer [class-names]]
             [app.ui.input :refer [Input]]
             [app.main.redux :as redux]))

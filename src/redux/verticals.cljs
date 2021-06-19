@@ -1,4 +1,4 @@
-(ns app.redux.verticals
+(ns redux.verticals
   (:require ["invariant" :as invariant]
             [clojure.string :as str]))
 
