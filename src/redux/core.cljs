@@ -112,3 +112,23 @@
      (str "create-store expected enhancer to be a function but found " enhancer))
 
    ((enhancer create-store) reducer preloaded-state)))
+
+(defn apply-middlewares [& middlewares]
+  (fn am-enhancer
+    [create-store]
+    (fn am-create-store
+      [reducer preloaded-state]
+      (let [store (create-store reducer preloaded-state)
+            get-state (:get-state store)
+            dispatch (:dispatch store)
+
+            api {:get-state get-state
+                 :dispatch dispatch}
+
+            chain (->>
+                    middlewares
+                    (map #(% api))
+                    (apply comp))
+            dispatch (chain dispatch)]
+
+        (assoc store :dispatch dispatch)))))

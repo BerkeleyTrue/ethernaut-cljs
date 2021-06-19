@@ -2,7 +2,7 @@
   (:require
     [helix.core :refer [$]]
     [react-dom :refer [render]]
-    [redux.core :refer [react-redux-context create-store]]
+    [redux.core :refer [react-redux-context create-store apply-middlewares]]
     [redux.verticals :as verts]
     [redux.dev-tool-ext :refer [dev-tools-enhancer]]
     [app.layout :as layout]
@@ -17,7 +17,9 @@
          store (create-store
                  (verts/combine-reducers main-redux/reducer-slice)
                  default-state
-                 (dev-tools-enhancer))]
+                 (comp
+                   (apply-middlewares)
+                   (dev-tools-enhancer)))]
 
      (reset! get-state (:get-state store))
      (render ($ (.-Provider react-redux-context)
