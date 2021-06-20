@@ -41,7 +41,7 @@
       (let [action {:type type}
             payload (apply final-payload-creator args)]
         (cond-> action
-          payload (assoc :payload payload)
+          (not (nil? payload)) (assoc :payload payload)
           meta? (assoc :meta (apply meta-creator args))))))))
 
 
