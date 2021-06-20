@@ -5,6 +5,7 @@
     [redux.core :refer [react-redux-context create-store apply-middlewares]]
     [redux.verticals :as verts]
     [redux.dev-tool-ext :refer [dev-tools-enhancer]]
+    [app.provider :as provider]
     [app.layout :as layout]
     [app.main.redux :as main-redux]))
 
@@ -18,7 +19,7 @@
                  (verts/combine-reducers main-redux/reducer-slice)
                  default-state
                  (comp
-                   (apply-middlewares)
+                   (apply-middlewares provider/provider-middleware)
                    (dev-tools-enhancer)))]
 
      (reset! get-state (:get-state store))

@@ -46,7 +46,7 @@
        :h-40
        :w-100
        :sm:h-screen
-       :sm:w-72
+       :sm:w-44
        :sm:flex-col
        :sm:justify-around)}
 

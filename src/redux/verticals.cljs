@@ -11,11 +11,14 @@
       (instance? js/Error head) head
       (apply payload-creator (into [head] args)))))
 
-(defn create-types [types]
+(defn create-types [& types]
   (->>
     types
-    (map [type] [type type])
+    (map #(vector (keyword (name %)) %))
     (into (sorted-map))))
+
+(comment
+  (= (create-types ::foo ::bar) {:foo ::foo :bar ::bar}))
 
 (defn create-action
   ([type] (create-action type identity nil))
