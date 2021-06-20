@@ -16,10 +16,6 @@
    5 "goerli"
    42 "kovan"})
 
-(defn- get-chain [provider]
-  ())
-
-
 (defn- get-chain-name [chain-id] (get chains chain-id "NA"))
 
 ; actions
