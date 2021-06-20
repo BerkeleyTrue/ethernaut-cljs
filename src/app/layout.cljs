@@ -4,15 +4,15 @@
             [helix.hooks :as h]
             [redux.core :refer [use-action]]
             [app.utils.core :refer [class-names]]
-            [app.provider :as provider]
+            [app.redux :refer [on-mount]]
             [app.side-bar :refer [SideBar]]
             [app.main.core :refer [Main]]))
 
 (defnc App []
-  (let [init-provider (use-action provider/init-provider)]
+  (let [on-mount (use-action on-mount)]
     (h/use-effect
       :once
-      (init-provider)))
+      (on-mount)))
 
   (d/div
     {:className

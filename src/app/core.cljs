@@ -16,7 +16,10 @@
   ([default-state]
    (let [default-state (or (@get-state) default-state)
          store (create-store
-                 (verts/combine-reducers main-redux/reducer-slice)
+                 (verts/combine-reducers
+                   (merge
+                     main-redux/reducer-slice
+                     provider/reducer-slicer))
                  default-state
                  (comp
                    (apply-middlewares provider/provider-middleware)
