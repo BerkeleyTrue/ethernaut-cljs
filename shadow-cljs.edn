@@ -2,7 +2,9 @@
                 [lilactown/helix "0.1.1"]
                 [com.teknql/shadow-cljs-tailwind-jit "0.2.1"]
                 [devcards "0.2.6"]
-                [cider/nrepl "0.3.0"]]
+                [cider/nrepl "0.3.0"]
+                [cljs-bean "1.5.0"]]
+
  :builds
  {:app
   {:asset-path "/js"
