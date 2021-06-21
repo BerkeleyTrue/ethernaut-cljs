@@ -19,8 +19,14 @@
 (defn main []
   (let [show-no-provider (use-selector show-no-provider)
         show-loading (not (use-selector provider/run?-selector))
-        chain-name (use-selector provider/chain-name-selector)]
-
+        chain-name (use-selector provider/chain-name-selector)
+        show-wrong-network (use-selector
+                             (comp
+                               #(not
+                                  (=
+                                   (:rinkeby provider/chain-to-id-map)
+                                   %))
+                               provider/chain-id-selector))]
     (d/div
       {:class-name
        (class-names
@@ -55,5 +61,7 @@
           show-no-provider ($ pill
                               {:class-name "mx-1"}
                               "no metamask provider detected")
+          show-wrong-network ($ pill
+                                "warning! wrong network.")
 
           :else ($ button "connect"))))))

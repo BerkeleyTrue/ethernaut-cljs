@@ -1,5 +1,6 @@
 (ns app.provider
-  (:require [redux.verticals :as verts]
+  (:require [clojure.set :refer [map-invert]]
+            [redux.verticals :as verts]
             ["@metamask/detect-provider" :as detect-provider]
             ["web3" :as web3]
             [app.redux :as app]))
@@ -13,6 +14,14 @@
    4 "rinkeby"
    5 "goerli"
    42 "kovan"})
+
+(def chain-to-id-map
+  (->>
+    chains
+    (map-invert)
+    (seq)
+    (map (fn [[k v]] [(keyword k) v]))
+    (into (sorted-map))))
 
 ; actions
 (def provider-detected (verts/create-action ::detected))
