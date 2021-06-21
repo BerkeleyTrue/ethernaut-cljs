@@ -44,6 +44,27 @@
           (not (nil? payload)) (assoc :payload payload)
           meta? (assoc :meta (apply meta-creator args))))))))
 
+(defn- add-meta-event [action event]
+  (assoc-in action [:meta :event] event))
+
+(defn compose-actions
+  "
+  Compose multiple actions in an event->command[] pattern
+  A single event can dispatch commands which will trigger
+  side effects in other fractals of an app
+  "
+  [event & commands]
+  (fn composed-action [& args]
+    (let [event-action (apply event args)
+          event-type (:type event-action)]
+      (into
+        [event-action]
+        (map
+          (fn [f]
+            (apply
+              (comp #(add-meta-event % event-type) f)
+              args))
+          commands)))))
 
 (defn reduce-reducers [default-state & reducers]
   (invariant
