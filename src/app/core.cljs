@@ -5,6 +5,7 @@
     [redux.core :refer [react-redux-context create-store apply-middlewares]]
     [redux.verticals :as verts]
     [redux.dev-tool-ext :refer [dev-tools-enhancer]]
+    [redux.array-action-middleware :as array-action]
     [app.provider :as provider]
     [app.layout :as layout]
     [app.main.redux :as main-redux]))
@@ -22,7 +23,9 @@
                      provider/reducer-slicer))
                  default-state
                  (comp
-                   (apply-middlewares provider/provider-middleware)
+                   (apply-middlewares
+                     array-action/middleware
+                     provider/provider-middleware)
                    (dev-tools-enhancer)))]
 
      (reset! get-state (:get-state store))
