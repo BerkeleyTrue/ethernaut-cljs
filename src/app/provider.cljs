@@ -25,15 +25,19 @@
 
 ; actions
 (def provider-detected (verts/create-action ::detected))
-(def connect-wallet (verts/create-action ::connect))
 (def chain-changed (verts/create-action ::chain-changed #(if (string? %) (js/parseInt % 16) %)))
 (def chain-changed-error (verts/create-action ::chain-changed-error))
+
+(def connect-wallet (verts/create-action ::connect-wallet))
+(def connect-wallet-complete (verts/create-action ::connect-wallet-complete))
+(def connect-wallet-error (verts/create-action ::connect-wallet-error))
 
 (def default-state
   {:detected? false
    :run? false
    :chain-id nil
-   :rinkeby? false})
+   :rinkeby? false
+   :address ""})
 
 ; selectors
 (def detected?-selector #(get-in % [::state :detected?]))
@@ -41,6 +45,7 @@
 (def rinkeby?-selector #(get-in % [::state :rinkeby?]))
 (def chain-id-selector #(get-in % [::state :chain-id]))
 (def chain-name-selector (comp #(get chains % "NA") chain-id-selector))
+(def address-selector #(get-in % [::state :address]))
 
 (def reducer-slicer
   {::state
@@ -57,7 +62,13 @@
       (fn [state {chainId :payload}]
         (->
           state
-          (assoc :chain-id chainId)))}
+          (assoc :chain-id chainId)))
+
+      ::connect-wallet-complete
+      (fn [state {address :payload}]
+        (->
+          state
+          (assoc :address address)))}
 
      default-state)})
 
@@ -93,5 +104,17 @@
                   (.then chain-changed)
                   (.catch chain-changed-error)
                   (.then dispatch))))))
+
+        (when (= action-type ::connect-wallet)
+          (let [detected? (detected?-selector (get-state))
+                provider @provider-ref]
+            (when (and detected? provider)
+              (->
+                provider
+                (.request #js {:method "eth_requestAccounts"})
+                (.then first)
+                (.then connect-wallet-complete)
+                (.catch connect-wallet-error)
+                (.then dispatch)))))
 
         result))))
