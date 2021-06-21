@@ -14,8 +14,6 @@
    5 "goerli"
    42 "kovan"})
 
-(defn- get-chain-name [chain-id] (get chains chain-id "NA"))
-
 ; actions
 (def provider-detected (verts/create-action ::detected))
 (def connect-wallet (verts/create-action ::connect))
@@ -33,6 +31,7 @@
 (def run?-selector #(get-in % [::state :run?]))
 (def rinkeby?-selector #(get-in % [::state :rinkeby?]))
 (def chain-id-selector #(get-in % [::state :chain-id]))
+(def chain-name-selector (comp #(get chains % "NA") chain-id-selector))
 
 (def reducer-slicer
   {::state

@@ -15,9 +15,11 @@
     provider/run?-selector
     (fn [detected? run?] (and run? (not detected?)))))
 
+
 (defn main []
   (let [show-no-provider (use-selector show-no-provider)
-        show-loading (not (use-selector provider/run?-selector))]
+        show-loading (not (use-selector provider/run?-selector))
+        chain-name (use-selector provider/chain-name-selector)]
 
     (d/div
       {:class-name
@@ -47,6 +49,7 @@
            :text-white
            :w-full)}
 
+        (and chain-name ($ pill (str "network: " chain-name)))
         (cond
           show-loading ($ loading-pulse)
           show-no-provider ($ pill
