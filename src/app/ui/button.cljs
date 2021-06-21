@@ -3,7 +3,11 @@
             [helix.dom :as d]
             [app.utils.core :refer [class-names]]))
 
-(defnc button [{:keys [children class-name]}]
+(defnc button [{:keys
+                [children
+                 class-name
+                 on-click]}]
+
   (d/button
     {:class-name
      (class-names
@@ -29,5 +33,6 @@
        :hover:bg-white
        :focus:outline-none
        :focus:ring-2
-       :focus:ring-offset-4)}
+       :focus:ring-offset-4)
+     :on-click on-click}
     (or children "Button")))
