@@ -120,7 +120,9 @@
       [reducer preloaded-state]
       (let [store (create-store reducer preloaded-state)
             get-state (:get-state store)
-            dispatch (:dispatch store)
+            store-dispatch (:dispatch store)
+            dispatch-ref (atom (fn [] (throw (js/Error "Do not dispatch during middleware creation"))))
+            dispatch (fn dispatch [action] (@dispatch-ref action))
 
             api {:get-state get-state
                  :dispatch dispatch}
@@ -129,6 +131,8 @@
                     middlewares
                     (map #(% api))
                     (apply comp))
-            dispatch (chain dispatch)]
 
-        (assoc store :dispatch dispatch)))))
+            chain-dispatch (chain store-dispatch)]
+
+        (reset! dispatch-ref chain-dispatch)
+        (assoc store :dispatch chain-dispatch)))))
