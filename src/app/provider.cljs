@@ -1,6 +1,6 @@
 (ns app.provider
   (:require [clojure.set :refer [map-invert]]
-            [redux.verticals :as verts]
+            [redux.verticals :as verts :refer [create-action]]
             ["@metamask/detect-provider" :as detect-provider]
             ["web3" :as web3]
             [app.redux :as app]))
@@ -32,12 +32,16 @@
 (def connect-wallet-complete (verts/create-action ::connect-wallet-complete))
 (def connect-wallet-error (verts/create-action ::connect-wallet-error))
 
+(def blocker-header-emitted (create-action ::blocker-header-emitted))
+
 (def default-state
   {:detected? false
    :run? false
    :chain-id nil
    :rinkeby? false
-   :address ""})
+   :address ""
+   :block-num 0})
+
 
 ; selectors
 (def detected?-selector #(get-in % [::state :detected?]))
@@ -46,6 +50,8 @@
 (def chain-id-selector #(get-in % [::state :chain-id]))
 (def chain-name-selector (comp #(get chains % "NA") chain-id-selector))
 (def address-selector #(get-in % [::state :address]))
+(def block-num-selector #(get-in % [::state :block-num]))
+
 
 (def reducer-slicer
   {::state
@@ -68,9 +74,20 @@
       (fn [state {address :payload}]
         (->
           state
-          (assoc :address address)))}
+          (assoc :address address)))
+      ::blocker-header-emitted
+      (fn [state {{number :number} :payload}]
+        (-> state
+          (assoc :block-num number)))}
 
      default-state)})
+
+(defonce sub (atom nil))
+
+(defn ^:dev/before-load unsub-on-reload []
+  (when @sub
+    (.unsubscribe @sub #(print "unsubcribed"))
+    (reset! sub nil)))
 
 (defn provider-middleware
   [{:keys [dispatch get-state]}]
@@ -97,13 +114,20 @@
                 detected? (detected?-selector (get-state))
                 provider @provider-ref]
 
-            (when (and detected? (nil? chain-id))
-              (let [wb (web3. provider)]
-                (->
-                  (.getChainId (.-eth wb))
-                  (.then chain-changed)
-                  (.catch chain-changed-error)
-                  (.then dispatch))))))
+            (when detected?
+              (let [wb (web3. provider)
+                    block-header-sub (.subscribe (.-eth wb) "newBlockHeaders")]
+
+                (reset! sub block-header-sub)
+                (.on block-header-sub "data" (comp dispatch blocker-header-emitted #(js->clj % :keywordize-keys true)))
+                (.on block-header-sub "error" (comp dispatch blocker-header-emitted))
+                ; get chain id if it wasn't found on the provider
+                (when (nil? chain-id)
+                  (->
+                    (.getChainId (.-eth wb))
+                    (.then chain-changed)
+                    (.catch chain-changed-error)
+                    (.then dispatch)))))))
 
         (when (= action-type ::connect-wallet)
           (let [detected? (detected?-selector (get-state))

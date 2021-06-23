@@ -48,6 +48,7 @@
         chain-name (use-selector provider/chain-name-selector)
         show-wrong-network (use-selector show-wrong-network-selector)
         address (use-selector show-address-selector)
+        block-num (use-selector provider/block-num-selector)
         click-on-connect (use-action redux/click-on-connect)]
 
     (d/div
@@ -77,6 +78,10 @@
            :shadow-lg
            :text-white
            :w-full)}
+
+        (and
+          (> block-num 0)
+          ($ pill (str "Block: " (.toLocaleString block-num))))
 
         (and
           (not (str/blank? address))
